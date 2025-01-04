@@ -12,6 +12,8 @@ const RootLayout = () => {
         <div className="container h-full flex items-center justify-between">
           {/* Logo and title */}
           <div className="flex items-center gap-2">
+            {/* Menu button on mobile only */}
+
             <Link to="/" className="flex items-center gap-2">
               <Gamepad className="h-8 w-8 text-primary" />
               <span className="font-bold text-xl">ThiGame</span>
