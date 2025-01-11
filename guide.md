@@ -195,3 +195,78 @@ const Button = React.forwardRef(({ className, variant = "default" }) => (
 ```
 
 Created a `cn` utility combining `clsx` and `tailwind-merge` to handle these class merging edge cases elegantly - a small solution with significant impact on component development workflow.
+
+### Day 3: Theme System Implementation
+
+#### Theme Architecture
+
+Implemented a robust theme system combining React's Context API with Zustand for state management. The architecture addresses a common challenge in theme management: balancing global state accessibility with component-level encapsulation.
+
+The theme system uses a three-component architecture, each with distinct responsibilities:
+
+```jsx
+// ThemeProvider.jsx - The core orchestrator
+export const ThemeProvider = ({ children }) => {
+  const { theme, strategy } = useThemeStore();
+
+  useEffect(() => {
+    document.documentElement.classList.toggle("dark", theme === "dark");
+  }, [theme]);
+
+  return (
+    <ThemeContext.Provider value={value}>{children}</ThemeContext.Provider>
+  );
+};
+```
+
+This separation of concerns manifests in three key components:
+
+1. ThemeProvider handles the system's core logic and state distribution
+2. ThemeToggle offers a simple interface for theme switching
+3. ThemeControl provides advanced theme management options
+
+A particularly interesting challenge arose around theme persistence. While our previous localStorage implementation worked, transitioning to Zustand's persist middleware offered a more elegant solution:
+
+```jsx
+const useThemeStore = create(
+  persist(
+    (set) => ({
+      theme: "light",
+      strategy: "manual",
+    }),
+    {
+      name: "theme-storage",
+    }
+  )
+);
+```
+
+This approach not only handles persistence automatically but also prepares our application for future database synchronization needs.
+
+#### Component Organization
+
+Reorganized the theme-related components into a dedicated theme directory, improving code organization and maintainability:
+
+```
+components/
+  ├── theme/
+  │   ├── ThemeProvider.jsx
+  │   ├── ThemeToggle.jsx
+  │   └── ThemeControl.jsx
+  ├── layout/
+  └── ui/
+```
+
+This structure facilitates better separation of concerns and makes the theme system's architecture immediately apparent to new developers.
+
+An interesting design decision was exposing theme functionality through a Context-based hook rather than direct store access. This abstraction shields components from the underlying state management implementation:
+
+```jsx
+// Instead of directly accessing the store
+const theme = useThemeStore((state) => state.theme);
+
+// Components use the context hook
+const { theme, toggleTheme } = useTheme();
+```
+
+This encapsulation proved valuable when implementing the system theme detection feature, as we could add the functionality without modifying any consuming components.

@@ -1,9 +1,19 @@
-import { Gamepad } from "lucide-react";
+import { Gamepad, Menu, X } from "lucide-react";
 import { Link, Outlet, useLocation } from "react-router-dom";
 import { routesConfig } from "../../routes/config";
+import { Button } from "../ui/button";
+import { useEffect, useState } from "react";
+import ThemeToggle from "../theme/ThemeToggle";
 
 const RootLayout = () => {
   const location = useLocation();
+  const [isSidebarOpen, setSidebarOpen] = useState(false);
+
+  useEffect(() => {
+    if (window.innerWidth < 768) {
+      setSidebarOpen(false);
+    }
+  }, [location]);
 
   return (
     <div className="min-h-screen bg-background">
@@ -13,6 +23,14 @@ const RootLayout = () => {
           {/* Logo and title */}
           <div className="flex items-center gap-2">
             {/* Menu button on mobile only */}
+            <Button
+              variant="ghost"
+              size="icon"
+              className="md:hidden"
+              onClick={() => setSidebarOpen(!isSidebarOpen)}
+            >
+              {isSidebarOpen ? <X /> : <Menu />}
+            </Button>
 
             <Link to="/" className="flex items-center gap-2">
               <Gamepad className="h-8 w-8 text-primary" />
@@ -41,7 +59,9 @@ const RootLayout = () => {
             })}
           </nav>
 
-          <div className="flex items-center gap-2"></div>
+          <div className="flex items-center gap-2">
+            <ThemeToggle />
+          </div>
         </div>
       </header>
 
