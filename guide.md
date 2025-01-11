@@ -91,89 +91,107 @@ export default ComponentName;
 
 ### Day 1: Initial Setup
 
-#### Created project using Vite
+#### Project Configuration with Vite
 
-We chose Vite over Create React App (CRA) for several compelling reasons:
-
-- **Build Performance**: Vite's dev server starts instantly regardless of app size, thanks to its ES modules-based approach. This is crucial for our project as we'll be adding multiple game modules.
-- **Hot Module Replacement (HMR)**: Vite's HMR implementation is significantly faster than CRA's, updating only the changed modules instead of rebuilding the entire bundle. This is especially valuable for game development where we frequently tweak game logic and UI.
+Opted for Vite over Create React App - a decision driven by the need for faster iteration during game development. The instant dev server startup and module-level HMR proved crucial for rapid prototyping:
 
 ```js
 // vite.config.js
-import { defineConfig } from "vite";
-import react from "@vitejs/plugin-react";
-import path from "path";
-
 export default defineConfig({
   plugins: [react()],
   resolve: {
     alias: {
-      "@": path.resolve(__dirname, "./src"), // Enables clean imports
+      "@": path.resolve(__dirname, "./src"),
     },
   },
 });
 ```
 
-#### Configured TailwindCSS
+The path aliasing setup significantly simplified our import structure, particularly valuable for the planned modular game system.
 
-Our TailwindCSS setup is built around a sophisticated design system using HSL colors and CSS variables:
+#### Design System Foundation
 
-- **HSL Color System**: We use HSL for better color manipulation and theme transitions:
+Implemented a design system using HSL colors and CSS variables. This approach solved several common theming challenges we faced in previous projects:
 
 ```css
-/* index.css */
+/* The core of our design system */
 :root {
   --background: 0 0% 100%;
   --foreground: 240 10% 3.9%;
   --primary: 240 5.9% 10%;
-  /* ... other color tokens */
 }
-```
 
-- **Dark Mode Implementation**: Our dark mode leverages CSS variables for seamless transitions:
-
-```css
 .dark {
   --background: 240 10% 3.9%;
   --foreground: 0 0% 98%;
-  /* ... dark mode colors */
 }
 ```
 
-This setup enables:
-
-- **Theme Consistency**: All components use the same color tokens
-- **Easy Dark Mode**: Simple class toggle switches the entire theme
-- **Runtime Theme Changes**: Colors can be modified without rebuilding
-
-The implementation uses Tailwind's `theme` configuration:
+The HSL color model particularly shines in our dark mode implementation - a simple class toggle handles theme switching with zero flash of unstyled content. Coupled with Tailwind's color configuration:
 
 ```js
 // tailwind.config.js
-export default {
-  darkMode: "class",
-  theme: {
-    extend: {
-      colors: {
-        background: "hsl(var(--background))",
-        foreground: "hsl(var(--foreground))",
-        primary: {
-          DEFAULT: "hsl(var(--primary))",
-          dark: "hsl(var(--primary-foreground))",
-        },
-        // ... other color configurations
+theme: {
+  extend: {
+    colors: {
+      background: "hsl(var(--background))",
+      primary: {
+        DEFAULT: "hsl(var(--primary))",
+        dark: "hsl(var(--primary-foreground))",
       },
     },
   },
+}
+```
+
+#### ESLint Configuration
+
+Adopted ESLint's new flat config system with its default React settings. The out-of-the-box rules aligned perfectly with our needs, requiring minimal customization while maintaining robust code quality standards.
+
+### Day 2: Building the Foundation
+
+#### Router Configuration
+
+Set up React Router with a configuration-based approach, moving away from traditional switch/route patterns. The new structure uses a centralized route configuration object:
+
+```js
+// routes/config.js
+export const routesConfig = {
+  home: {
+    path: "",
+    component: HomePage,
+    meta: {
+      title: "Accueil",
+      icon: Home,
+    },
+  },
+  // ... other routes
 };
 ```
 
-#### Setup ESLint with modern config
+This choice turned out particularly valuable for maintainability - adding new game routes will be as simple as extending the config object.
 
-We implemented ESLint with its modern flat configuration, keeping the default settings as they align well with our needs for React development. The configuration focuses on React-specific rules and modern JavaScript practices.
+#### Component Architecture
 
-### Day 2: Basic Structure
+Established a three-tier component hierarchy that proved essential for scaling:
 
-- Router configuration
-- Created base components
-- Implemented theming system
+- `ui/`: Core building blocks (Button, Card, Badge)
+- `layout/`: Structural components (RootLayout, GridContainer)
+- `game/`: Game-specific components (coming soon)
+
+The initial Button implementation highlighted an interesting challenge with Tailwind class conflicts:
+
+```jsx
+// Button.jsx - Solved className conflicts with cn utility
+const Button = React.forwardRef(({ className, variant = "default" }) => (
+  <Comp
+    className={cn(
+      "inline-flex rounded-md text-sm font-medium",
+      variant === "default" && "bg-primary text-primary-foreground",
+      className
+    )}
+  />
+));
+```
+
+Created a `cn` utility combining `clsx` and `tailwind-merge` to handle these class merging edge cases elegantly - a small solution with significant impact on component development workflow.
