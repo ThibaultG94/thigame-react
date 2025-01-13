@@ -1,33 +1,28 @@
 import { Gamepad, Menu, X } from "lucide-react";
-import { Link, Outlet, useLocation } from "react-router-dom";
-import { routesConfig } from "../../routes/config";
+import { Link, Outlet } from "react-router-dom";
 import { Button } from "../ui/button";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import ThemeToggle from "../theme/ThemeToggle";
+import { useResponsiveMenu } from "../../hooks/useResponsiveMenu";
+import Navigation from "./Navigation";
+import { cn } from "../../utils/cn";
 
 const RootLayout = () => {
-  const location = useLocation();
+  const { isOpen, toggle, close } = useResponsiveMenu();
   const [isSidebarOpen, setSidebarOpen] = useState(false);
-
-  useEffect(() => {
-    if (window.innerWidth < 768) {
-      setSidebarOpen(false);
-    }
-  }, [location]);
 
   return (
     <div className="min-h-screen bg-background">
       {/* Header */}
       <header className="fixed top-0 z-50 w-full h-16 border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
         <div className="container h-full flex items-center justify-between">
-          {/* Logo and title */}
+          {/* Logo and mobile menu button  */}
           <div className="flex items-center gap-2">
-            {/* Menu button on mobile only */}
             <Button
               variant="ghost"
               size="icon"
               className="md:hidden"
-              onClick={() => setSidebarOpen(!isSidebarOpen)}
+              onClick={toggle}
             >
               {isSidebarOpen ? <X /> : <Menu />}
             </Button>
@@ -39,37 +34,27 @@ const RootLayout = () => {
           </div>
 
           {/* Desktop navigation */}
-          <nav className="hidden md:flex items-center gap-6">
-            {Object.values(routesConfig).map(({ path, meta }) => {
-              const Icon = meta.icon;
-              return (
-                <Link
-                  key={path}
-                  to={`/${path}`}
-                  className={`flex items-center gap-2 text-base ${
-                    location.pathname === `/${path}`
-                      ? "text-primary - font-bold"
-                      : "text-muted-foreground hover:text-foreground"
-                  }`}
-                >
-                  {Icon && <Icon className="h-5 w-5" />}
-                  <span>{meta.title}</span>
-                </Link>
-              );
-            })}
-          </nav>
+          <Navigation className="hidden md:flex items-center gap-2" />
 
-          <div className="flex items-center gap-2">
-            <ThemeToggle />
-          </div>
+          {/* Theme toggle */}
+          <ThemeToggle />
         </div>
       </header>
 
+      {/* Mobile menu */}
+      <div
+        className={cn(
+          "fixed inset-x-0 top-16 z-40 bg-background border-b md:hidden",
+          "transform transition-transform duration-300",
+          isOpen ? "translate-y-0" : "-translate-y-full"
+        )}
+      >
+        <Navigation className="container py-4 flex flex-col" onClick={close} />
+      </div>
+
       {/* Main content */}
-      <main className="pt-16">
-        <div className="container py-6">
-          <Outlet />
-        </div>
+      <main className="container pt-16 py-6">
+        <Outlet />
       </main>
     </div>
   );
