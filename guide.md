@@ -270,3 +270,73 @@ const { theme, toggleTheme } = useTheme();
 ```
 
 This encapsulation proved valuable when implementing the system theme detection feature, as we could add the functionality without modifying any consuming components.
+
+### Day 4: Navigation Architecture Refactoring
+
+While expanding the application, we faced a key architectural decision regarding the navigation system. The challenge was to create a maintainable and responsive navigation structure without overcomplicating the codebase.
+
+#### Navigation Strategy
+
+Initially, we considered implementing the Composite Pattern for our navigation, which would have allowed complex nested menus and highly flexible structures. However, this approach was deemed overly complex for our current needs. Instead, we opted for a simpler yet extensible solution that leverages our existing route configuration:
+
+```javascript
+// routes/config.js - Our single source of truth
+export const routesConfig = {
+  home: {
+    path: "",
+    component: HomePage,
+    meta: {
+      title: "Accueil",
+      icon: Home,
+    },
+  },
+  // ... other routes
+};
+```
+
+This configuration-driven approach provides several benefits:
+
+- Routes, titles, and icons are centrally managed
+- Adding new routes requires minimal boilerplate
+- The UI automatically updates when routes change
+
+#### Component Separation
+
+A key insight was separating the navigation logic into three distinct parts:
+
+1. A `useResponsiveMenu` hook handling mobile-specific behavior
+2. A standalone `Navigation` component consuming our route configuration
+3. The `RootLayout` orchestrating these pieces
+
+This separation follows the principle of single responsibility while maintaining flexibility:
+
+```javascript
+// Navigation.jsx - Clean, configuration-driven component
+const Navigation = ({ className, onClick }) => {
+  const location = useLocation();
+
+  return (
+    <nav className={className}>
+      {Object.values(routesConfig).map(({ path, meta }) => {
+        // Navigation rendering logic
+      })}
+    </nav>
+  );
+};
+```
+
+#### Responsive Design Pattern
+
+Rather than trying to anticipate every possible layout scenario, we implemented a responsive design pattern that gracefully adapts between mobile and desktop views. The key was using CSS transforms for smooth transitions and Tailwind's mobile-first approach:
+
+```javascript
+className={cn(
+  "fixed inset-x-0 top-16 z-40 bg-background border-b md:hidden",
+  "transform transition-transform duration-300",
+  isOpen ? "translate-y-0" : "-translate-y-full"
+)}
+```
+
+This approach ensures smooth animations while maintaining good performance, as transforms are GPU-accelerated.
+
+The refactoring demonstrates an important principle in our development process: resist the urge to over-engineer solutions before they're needed. By starting with a simple but well-structured approach, we've built a foundation that can be extended when more complex requirements arise.
