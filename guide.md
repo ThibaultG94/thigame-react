@@ -340,3 +340,51 @@ className={cn(
 This approach ensures smooth animations while maintaining good performance, as transforms are GPU-accelerated.
 
 The refactoring demonstrates an important principle in our development process: resist the urge to over-engineer solutions before they're needed. By starting with a simple but well-structured approach, we've built a foundation that can be extended when more complex requirements arise.
+
+### Day 5: Home Page Architecture and Data Management
+
+While building the home page, we faced an interesting architectural challenge: finding the right balance between component organization and data management. Our initial instinct was to follow common design patterns (Strategy, Observer, Builder), but this led us to an important realization about React architecture.
+
+#### Component Organization Evolution
+
+The journey started with a monolithic `Home.jsx` containing all sections. While functional, this approach presented clear maintainability issues. We experimented with various architectural patterns before settling on a simpler yet powerful solution:
+
+```javascript
+// Initial thought - using design patterns
+class HomeSection {
+  render() {
+    throw new Error("Must implement render");
+  }
+}
+
+// Final approach - React-centric component composition
+const Section = ({ children, className, centered }) => (
+  <section className={cn("py-8", centered && "text-center", className)}>
+    {children}
+  </section>
+);
+```
+
+The shift from class-based patterns to component composition better aligned with React's philosophy. Instead of forcing object-oriented patterns, we embraced React's component model, resulting in cleaner, more maintainable code.
+
+#### Data Management Strategy
+
+A key insight emerged when handling game data. Rather than embedding it within components, we established a dedicated data layer:
+
+```javascript
+src/
+  └── data/
+      └── games/
+          └── featured.js
+```
+
+This separation provides several benefits:
+
+- Clear separation between data and presentation
+- Centralized data management
+- Easier future integration with backend services
+- Improved testability
+
+The decision to pass data as props rather than importing directly into components reflects a conscious choice for component reusability and explicit dependencies.
+
+This refactoring demonstrates an important principle in our development process: while design patterns offer valuable insights, the best solution often lies in embracing the framework's inherent patterns and strengths rather than forcing traditional OOP patterns where they don't naturally fit.
