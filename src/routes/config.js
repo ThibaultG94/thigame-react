@@ -2,7 +2,7 @@ import { Gamepad2, Home, Trophy, User } from "lucide-react";
 import { lazy } from "react";
 
 const HomePage = lazy(() => import("../pages/home/Home"));
-const GamesPage = lazy(() => import("../pages/Games"));
+const GamesPage = lazy(() => import("../pages/games/Games"));
 const LeaderboardPage = lazy(() => import("../pages/Leaderboard"));
 const AboutPage = lazy(() => import("../pages/About"));
 
