@@ -1,3 +1,5 @@
+import { create } from "zustand";
+
 export const useGamesStore = create((set) => ({
   games: [],
   filters: {
