@@ -388,3 +388,113 @@ This separation provides several benefits:
 The decision to pass data as props rather than importing directly into components reflects a conscious choice for component reusability and explicit dependencies.
 
 This refactoring demonstrates an important principle in our development process: while design patterns offer valuable insights, the best solution often lies in embracing the framework's inherent patterns and strengths rather than forcing traditional OOP patterns where they don't naturally fit.
+
+### Day 6: Games Page and Component Architecture
+
+Our work on the Games page presented an interesting challenge in balancing reusable UI components with page-specific functionality. This development process highlighted several key architectural insights.
+
+#### Component Hierarchy Evolution
+
+The Games page architecture emerged from careful consideration of both user needs and maintainability concerns. We started with a clear component hierarchy:
+
+```javascript
+const GamesPage = () => {
+  return (
+    <div>
+      <GamesHero />
+      <GamesFilters />
+      <GamesGrid />
+    </div>
+  );
+};
+```
+
+This simple structure masks a sophisticated interplay of components, each with distinct responsibilities. Rather than creating a monolithic page component, we opted for a modular approach that separates concerns while maintaining cohesive user experience.
+
+#### Filter System Architecture
+
+One of the most interesting architectural decisions involved the filter system. Initially, we considered embedding filter functionality directly within the Games page component. However, this approach would have limited reusability and complicated state management. Instead, we developed a reusable FilterSection component:
+
+```javascript
+// components/ui/filter-section/FilterSection.jsx
+const FilterSection = ({ title, options, value, onChange }) => {
+  return (
+    <div className="flex gap-4 items-center">
+      <span className="text-sm font-medium min-w-24">{title}</span>
+      <div className="flex flex-wrap gap-2">
+        {options.map((option) => (
+          <button
+            key={option}
+            onClick={() => onChange(value === option ? "" : option)}
+            className={cn(
+              "px-3 py-1.5 rounded-full text-sm border transition-all",
+              value === option
+                ? "bg-primary text-primary-foreground"
+                : "hover:bg-accent"
+            )}
+          >
+            {option}
+          </button>
+        ))}
+      </div>
+    </div>
+  );
+};
+```
+
+This component exemplifies several key principles:
+
+1. **Single Responsibility**: Each component handles one specific aspect of the UI
+2. **Reusability**: The FilterSection component is generic enough to be used across different contexts
+3. **Composability**: Components can be combined in various ways to create more complex interfaces
+
+#### State Management Strategy
+
+The Games page required careful consideration of state management. We implemented a dedicated store using Zustand:
+
+```javascript
+export const useGamesStore = create((set) => ({
+  games: [],
+  filters: {
+    category: "",
+    difficulty: "",
+    playerMode: "",
+  },
+  setFilter: (key, value) =>
+    set((state) => ({
+      filters: { ...state.filters, [key]: value },
+    })),
+}));
+```
+
+This state management approach offers several advantages:
+
+- Centralized filter state accessible throughout the application
+- Clean separation between UI components and data management
+- Simplified testing and debugging capabilities
+
+#### Layout System Enhancement
+
+Our work on the Games page led to significant improvements in our layout system. The GridContainer component, in particular, evolved to handle various display requirements:
+
+```javascript
+<GridContainer columns={{ xs: 1, md: 2, lg: 3 }} gap="lg" contained>
+  {/* Grid content */}
+</GridContainer>
+```
+
+This responsive grid system demonstrates how we've abstracted layout concerns into reusable components while maintaining flexibility for different use cases.
+
+#### Key Learnings
+
+1. **Component Placement**: The decision to place FilterSection in the UI components directory rather than within the Games page hierarchy proved beneficial for reusability and maintainability.
+
+2. **State Management**: Using Zustand for filter state management showed how lightweight state management can be both powerful and simple to implement.
+
+3. **Responsive Design**: Our approach to responsive layout components demonstrated how we can maintain consistency while adapting to different screen sizes.
+
+4. **Component Communication**: The interaction between filters and the game grid highlighted the importance of well-structured state management in React applications.
+
+This development process reinforced our commitment to component-based architecture while introducing new patterns for state management and UI composition. The resulting system provides a solid foundation for future feature development while maintaining clarity and maintainability.
+
+The Games page implementation represents a significant step forward in our architectural thinking, combining practical solutions with forward-looking patterns that will serve us well as the application grows.
