@@ -1,7 +1,8 @@
 import { create } from "zustand";
+import { featuredGames } from "../data/games/featured";
 
 export const useGamesStore = create((set) => ({
-  games: [],
+  games: featuredGames,
   filters: {
     category: "",
     difficulty: "",
