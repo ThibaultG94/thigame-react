@@ -435,3 +435,52 @@ This approach provides a foundation that can easily be extended when we need to 
 3. **Progressive Enhancement**: Our implementation enables gradual feature addition without requiring major refactoring.
 
 This development phase demonstrated how thoughtful architectural decisions early in the process can significantly impact the long-term maintainability of a React application.
+
+Je vais ajouter une entrée pour le Day 7 dans guide.md qui se concentre sur les points les plus pertinents de notre développement récent.
+
+### Day 7: Temporary Pages Strategy and Documentation
+
+Our work today focused on implementing placeholder pages while maintaining architectural consistency. This presented an interesting challenge in balancing temporary solutions with long-term maintainability.
+
+#### Coming Soon Page Pattern
+
+The development of the leaderboard placeholder highlighted an important principle: temporary doesn't mean rushed. We created a reusable `ComingSoonPage` component that:
+
+1. Maintains consistency with our design system
+2. Provides clear user feedback about upcoming features
+3. Demonstrates professional polish even in placeholder states
+
+Key insight: Placeholder pages shouldn't be afterthoughts - they're part of the user experience and should maintain the same quality standards as permanent features.
+
+#### About Page Architecture
+
+The About page implementation reinforced several architectural decisions:
+
+```jsx
+const AboutPage = () => {
+  const features = [
+    /* feature data */
+  ];
+  const roadmap = [
+    /* roadmap data */
+  ];
+
+  return <Section>{/* Structured content sections */}</Section>;
+};
+```
+
+This structure demonstrates:
+
+- Clear separation between data and presentation
+- Reuse of our existing component library (Section, Card, GridContainer)
+- Consistent layout patterns that maintain responsive design principles
+
+#### Key Learnings
+
+1. **Temporary Components**: Even temporary solutions should be implemented with reusability in mind. Our `ComingSoonPage` can be repurposed for other features under development.
+
+2. **Content Structure**: The About page's modular structure makes future updates straightforward while maintaining consistency.
+
+3. **Component Reuse**: Heavy utilization of existing components validated our component library's flexibility.
+
+This development phase reinforced that maintenance-friendly architecture doesn't have to be complex - sometimes the simplest solution is the most maintainable one.

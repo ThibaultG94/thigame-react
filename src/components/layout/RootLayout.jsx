@@ -44,12 +44,13 @@ const RootLayout = () => {
       {/* Mobile menu */}
       <div
         className={cn(
-          "fixed inset-x-0 top-16 z-40 bg-background border-b md:hidden",
-          "transform transition-transform duration-300",
+          "fixed inset-x-0 top-16 z-40 bg-background backdrop-blur border-b md:hidden",
+          "transform transition-transform duration-300 ease-out",
+          "p-4",
           isOpen ? "translate-y-0" : "-translate-y-full"
         )}
       >
-        <Navigation className="container py-4 flex flex-col" onClick={close} />
+        <Navigation className="flex flex-col space-y-2" onClick={close} />
       </div>
 
       {/* Main content */}
