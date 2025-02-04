@@ -484,3 +484,25 @@ This structure demonstrates:
 3. **Component Reuse**: Heavy utilization of existing components validated our component library's flexibility.
 
 This development phase reinforced that maintenance-friendly architecture doesn't have to be complex - sometimes the simplest solution is the most maintainable one.
+
+### Day 8: Review the Architecture of the Games
+
+Our attempt to use object-oriented patterns (Factory, Strategy) with React proved counterproductive. Key lessons:
+
+1. **React prefers composition to inheritance**.
+
+   - The class and inheritance approach creates more complexity than benefits
+   - React hooks offer a better way to share logic
+
+2. **Revised architecture**
+
+   - Back to tried-and-tested functional hooks
+   - Focus on modular, reusable components
+   - Using Zustand for global status management
+
+3. **Next steps**
+   - Implement Memory Game according to React best practices
+   - Create common hooks for shared functions (timer, score)
+   - Document patterns to facilitate the addition of new games
+
+This review reminds us that following the “React Way” - function composition and hooks - is often more effective than forcing traditional patterns.
